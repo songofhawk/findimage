@@ -1,5 +1,7 @@
 import time
 
+from cv2 import cv2
+
 
 def _to_gray(image):
     channel = 1 if len(image.shape) == 2 else image.shape[2]
