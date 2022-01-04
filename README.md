@@ -37,7 +37,7 @@ match_result = find_template(image_origin, image_template)
         [right, top],
         [right, bottom]
     ],
-    'confidence': percentage   #识别结果的匹配度,在-1~1之间，越大匹配度越高, 如果为1，表示按像素严格匹配
+    "confidence": percentage   #识别结果的匹配度,在-1~1之间，越大匹配度越高, 如果为1，表示按像素严格匹配
 }
 ```
 
