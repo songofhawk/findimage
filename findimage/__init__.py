@@ -1,6 +1,7 @@
 import time
 
 from cv2 import cv2
+from numpy import ndarray
 
 
 def _to_gray(image):
@@ -19,15 +20,15 @@ def _to_gray(image):
     return image_gray
 
 
-def find_all_template(im_source, im_template, threshold=0.5, maxcnt=0, edge=False, debug=False):
+def find_all_template(im_source: ndarray, im_template: ndarray, threshold=0.5, maxcnt=0, edge=False, debug=False):
     """
     用 cv2.templateFind 方法, 在im_source中查找im_search的匹配位置，源图和
 
     Use pixel match to find pictures.
 
     Args:
-        im_source(string): 图像、素材
-        im_template(string): 需要查找的图片
+        im_source(string): 源图(大图)
+        im_template(string): 需要查找的图片(小图)
         threshold: 阈值，当匹配度小于该阈值的时候，就忽略掉
         maxcnt: 最大查找数量, 缺省为0, 即不限
         edge: 是否做边缘提取后再匹配
@@ -39,8 +40,14 @@ def find_all_template(im_source, im_template, threshold=0.5, maxcnt=0, edge=Fals
         IOError: when file read error
     """
 
-    if debug:
-        start_time = time.time()
+    w, h = im_template.shape[1], im_template.shape[0]
+    sw, sh = im_source.shape[1], im_source.shape[0]
+    if w > sw or h > sh:
+        raise RuntimeError(
+            "source image size must larger than template image size, but not source is {}x{}, template is {}x{}",
+            sw, sh, w, h)
+
+    start_time = time.time()
     gray_template = _to_gray(im_template)
     gray_source = _to_gray(im_source)
     if debug:
@@ -63,8 +70,6 @@ def find_all_template(im_source, im_template, threshold=0.5, maxcnt=0, edge=Fals
 
     if debug:
         start_time = time.time()
-    w, h = im_template.shape[1], im_template.shape[0]
-    sw, sh = im_source.shape[1], im_source.shape[0]
 
     result = []
     while True:
@@ -96,6 +101,7 @@ def find_all_template(im_source, im_template, threshold=0.5, maxcnt=0, edge=Fals
 
     return result
 
+
 def find_template(im_source, im_search, threshold=0.5, rgb=False, bgremove=False):
     '''
     @return find location
@@ -103,4 +109,3 @@ def find_template(im_source, im_search, threshold=0.5, rgb=False, bgremove=False
     '''
     result = find_all_template(im_source, im_search, threshold, 1, rgb, bgremove)
     return result[0] if result else None
-
