@@ -9,10 +9,10 @@ find the template image (smaller) in a source image (bigger)
 
 ## 示例
 比如我们对“思否”课程菜单截图如下：
-
 ![思否课程菜单-标准](image/seg_course_menu.png)
 
 我们想从中找到#的位置，可以提供一张小模板图：
+![思否课程菜单-标准](image/seg_sharp.png)
 
 然后调用find_template方法：
 
