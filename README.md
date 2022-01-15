@@ -1,5 +1,4 @@
 # findimage - 在大图中找小图
-
 本项目不是图像搜索，不能从一堆图片中找到相似的那张，而是从一张大图中定位给定模板小图的位置。
 
 find the template image (smaller) in a source image (bigger)
@@ -7,12 +6,22 @@ find the template image (smaller) in a source image (bigger)
 以前这种功能，我都是用aircv实现的，但网易这个项目很久没有维护了，提交PR也没人处理，所以单独做了一个。
 原项目还有一些别的图像处理API，本项目专注于找小图功能，所以干脆就叫findimage。
 
+To find a template image(smaller) in a source image(bigger)
+
+This project is generated from https://github.com/NetEaseGame/aircv.git, which is not maintained for a long time.
+
+There are several improvements and changes in this projects:
+* support finding grayscale image, either source or template
+* support finding image with transparent channel
+* optimized the performance of find_all, use numpy slicing set data instead of floodFill
+* removed methods that are not related to finding images
+
 ## 示例
 比如我们对“思否”课程菜单截图如下：
-![思否课程菜单-标准](image/seg_course_menu.png)
+![思否课程菜单-标准](https://github.com/songofhawk/findimage/raw/main/image/seg_course_menu.png)
 
 我们想从中找到#的位置，可以提供一张小模板图：
-![思否课程菜单-标准](image/seg_sharp.png)
+![思否课程菜单-标准](https://github.com/songofhawk/findimage/raw/main/image/seg_sharp.png)
 
 然后调用find_template方法：
 
@@ -50,4 +59,4 @@ cv2.imwrite('result.png', img_result)
 ```
 
 结果如下图所示：
-![find_template匹配结果](image/find_template_result.png)
+![find_template匹配结果](https://github.com/songofhawk/findimage/raw/main/image/find_template_result.png)

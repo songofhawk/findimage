@@ -36,15 +36,14 @@ if __name__ == '__main__':
         description='to find a template image(smaller) in a source image(bigger)',
         long_description=parse_description(),
         long_description_content_type='text/markdown',
-        url='https://github.com/alpha-xone/xone',
-        author='Alpha x1',
-        author_email='alpha.xone@outlook.com',
-        license='Apache',
+        url='https://github.com/songofhawk/findimage',
+        author='songofhawk',
+        author_email='songofhawk@gmail.com',
+        license='MIT',
         classifiers=[
-            "License :: OSI Approved :: Apache Software License",
-            'Programming Language :: Python :: 3.6',
-            'Programming Language :: Python :: 3.7',
-            'Programming Language :: Python :: 3.8',
+            'License :: OSI Approved :: MIT License',
+            'Programming Language :: Python :: 3',
+            'Operating System :: OS Independent'
         ],
         include_package_data=True,
         install_requires=[
