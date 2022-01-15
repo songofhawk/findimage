@@ -1,1 +1,1 @@
-opencv_python>=3.0.0
+opencv_python>=3.0
