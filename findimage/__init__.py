@@ -1,3 +1,16 @@
+"""
+To find a template image(smaller) in a source image(bigger)
+
+This project is generated from https://github.com/NetEaseGame/aircv.git, which is not maintained for a long time.
+
+There are several improvements and changes in this projects:
+* support finding grayscale image, either source or template
+* support finding image with transparent channel
+* optimized the performance of find_all, use numpy slicing set data instead of floodFill
+* removed methods that are not related to finding images
+"""
+__version__ = '0.1.0'
+
 import time
 
 from cv2 import cv2
@@ -20,24 +33,27 @@ def _to_gray(image):
     return image_gray
 
 
-def find_all_template(im_source: ndarray, im_template: ndarray, threshold=0.5, maxcnt=0, edge=False, debug=False):
+def find_all_template(im_source: ndarray, im_template: ndarray, threshold: float = 0.5, maxcnt: int = 0,
+                      edge: bool = False,
+                      debug: bool = False):
     """
-    用 cv2.templateFind 方法, 在im_source中查找im_search的匹配位置，源图和
-
-    Use pixel match to find pictures.
+    在im_source中查找im_template的匹配位置，返回指定数量的匹配结果
 
     Args:
-        im_source(string): 源图(大图)
-        im_template(string): 需要查找的图片(小图)
-        threshold: 阈值，当匹配度小于该阈值的时候，就忽略掉
-        maxcnt: 最大查找数量, 缺省为0, 即不限
-        edge: 是否做边缘提取后再匹配
-
+        im_source(string): 源图(大图)，opencv格式的图片
+        im_template(string): 需要查找的图片(小图)，opencv格式的图片
+        threshold: 阈值，当匹配度小于该阈值的时候，就忽略掉，是一个-1~1之间的值，通常小于0.5，匹配度就相当低了
+        maxcnt: 最大匹配数量, 缺省为0, 即不限
+        edge: 是否做边缘提取后再匹配，缺省为False，如果设置为True，会把源图和模板图，都基于Canny算法提取边缘，然后再做匹配
+        debug: 是否不输出中间处理步骤和处理时间
     Returns:
-        A tuple of found [(point, score), ...]
+        匹配结果列表，每个结果包含以下属性：
+        result: 匹配区域的中心点
+        rectangle: 匹配区域的四角坐标
+        confidence: 匹配程度, 是一个-1~1之间的值, 约大表示匹配度越高
 
     Raises:
-        IOError: when file read error
+        IOError: 读取文件失败
     """
 
     w, h = im_template.shape[1], im_template.shape[0]
@@ -102,10 +118,24 @@ def find_all_template(im_source: ndarray, im_template: ndarray, threshold=0.5, m
     return result
 
 
-def find_template(im_source, im_search, threshold=0.5, rgb=False, bgremove=False):
-    '''
-    @return find location
-    if not found; return None
-    '''
-    result = find_all_template(im_source, im_search, threshold, 1, rgb, bgremove)
+def find_template(im_source: ndarray, im_template: ndarray, threshold: float = 0.5,
+                  edge: bool = False,
+                  debug: bool = False):
+    """
+    在im_source中查找im_template的匹配位置，返回最匹配的那个结果，内部调用find_all_template实现
+    Args:
+        im_source(string): 源图(大图)，opencv格式的图片
+        im_template(string): 需要查找的图片(小图)，opencv格式的图片
+        threshold: 阈值，当匹配度小于该阈值的时候，就忽略掉，是一个-1~1之间的值，通常小于0.5，匹配度就相当低了
+        edge: 是否做边缘提取后再匹配，缺省为False，如果设置为True，会把源图和模板图，都基于Canny算法提取边缘，然后再做匹配
+        debug: 是否不输出中间处理步骤和处理时间
+    Returns:
+        匹配结果对象,包含如下属性:
+        result: 匹配区域的中心点
+        rectangle: 匹配区域的四角坐标
+        confidence: 匹配程度, 是一个-1~1之间的值, 约大表示匹配度越高
+        如果没有找到符合条件的匹配结果, 返回None
+
+    """
+    result = find_all_template(im_source, im_template, threshold, 1, edge, debug)
     return result[0] if result else None

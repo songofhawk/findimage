@@ -2,12 +2,6 @@ import pathlib
 from os import path
 from setuptools import setup, find_packages
 
-# for pip >= 10
-try:
-    from pip._internal.req import parse_requirements
-# for pip <= 9.0.3
-except ImportError:
-    from pip.req import parse_requirements
 
 PACKAGE_ROOT = pathlib.Path(__file__).parent
 
@@ -37,9 +31,9 @@ def parse_description():
 if __name__ == '__main__':
 
     setup(
-        name='xone',
-        version=parse_version('xone'),
-        description='Frequently used functions for financial data analysis',
+        name='findimage',
+        version=parse_version('findimage'),
+        description='to find a template image(smaller) in a source image(bigger)',
         long_description=parse_description(),
         long_description_content_type='text/markdown',
         url='https://github.com/alpha-xone/xone',
@@ -54,10 +48,7 @@ if __name__ == '__main__':
         ],
         include_package_data=True,
         install_requires=[
-            str(getattr(ir, 'req' if hasattr(ir, 'req') else 'requirement'))
-            for ir in parse_requirements(
-                f'{PACKAGE_ROOT}/requirements.txt', session='hack'
-            )
+            'opencv_python>=3.0'
         ],
-        packages=find_packages(include=['xone', 'xone.*']),
+        packages=find_packages(include=['findimage', 'findimage.*']),
     )
