@@ -6,9 +6,14 @@ find the template image (smaller) in a source image (bigger)
 以前这种功能，我都是用aircv实现的，但网易这个项目很久没有维护了，提交PR也没人处理，所以单独做了一个。
 原项目还有一些别的图像处理API，本项目专注于找小图功能，所以干脆就叫findimage。
 
+和原aircv相比，findimage有以下这些改进:
+* 支持直接传入灰度图(虽然函数内调用opencv的时候,都是使用灰度图完成的,原aircv项目却要求传入的图片必须包含bgr三个通道,不然会报错)
+* 支持背景透明的图片
+* 优化了find_all_template方法的性能，用numpy的切片赋值代替floodFill方法来避免重叠，大概会缩短1/4的总体查找时间
+
 To find a template image(smaller) in a source image(bigger)
 
-This project is generated from https://github.com/NetEaseGame/aircv.git, which is not maintained for a long time.
+This project is inspired from https://github.com/NetEaseGame/aircv.git, which is not maintained for a long time.
 
 There are several improvements and changes in this projects:
 * support finding grayscale image, either source or template

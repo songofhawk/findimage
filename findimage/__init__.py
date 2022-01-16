@@ -1,7 +1,7 @@
 """
 To find a template image(smaller) in a source image(bigger)
 
-This project is generated from https://github.com/NetEaseGame/aircv.git, which is not maintained for a long time.
+This project is inspired from https://github.com/NetEaseGame/aircv.git, which is not maintained for a long time.
 
 There are several improvements and changes in this projects:
 * support finding grayscale image, either source or template
@@ -9,7 +9,7 @@ There are several improvements and changes in this projects:
 * optimized the performance of find_all, use numpy slicing set data instead of floodFill
 * removed methods that are not related to finding images
 """
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 import time
 
