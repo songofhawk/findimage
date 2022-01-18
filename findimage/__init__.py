@@ -17,23 +17,31 @@ from cv2 import cv2
 from numpy import ndarray
 
 
-def _to_gray(image):
-    channel = 1 if len(image.shape) == 2 else image.shape[2]
-    if channel == 1:
-        # if the image is gray, then keep it
-        image_gray = image
-    elif channel == 3:
-        # if it's colorful, then convert it to gray
-        image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    elif channel == 4:
-        # if it's colorful with transparent channel, then convert it to gray
-        image_gray = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
-    else:
-        raise RuntimeError('im_search have {} channel, which is unexpected!'.format(channel))
-    return image_gray
+def find_template(im_source: ndarray, im_template: ndarray, threshold: float = 0.5,
+                  edge: bool = False,
+                  debug: bool = False):
+    """
+    在im_source中查找im_template的匹配位置，返回最匹配的那个结果，内部调用find_all_template实现
+    Args:
+        im_source(string): 源图(大图)，opencv格式的图片
+        im_template(string): 需要查找的图片(小图)，opencv格式的图片
+        threshold: 阈值，当匹配度小于该阈值的时候，就忽略掉，是一个-1~1之间的值，通常小于0.5，匹配度就相当低了
+        edge: 是否做边缘提取后再匹配，缺省为False，如果设置为True，会把源图和模板图，都基于Canny算法提取边缘，然后再做匹配
+        debug: 是否不输出中间处理步骤和处理时间
+    Returns:
+        匹配结果对象,包含如下属性:
+        result: 匹配区域的中心点
+        rectangle: 匹配区域的四角坐标
+        confidence: 匹配程度, 是一个-1~1之间的值, 约大表示匹配度越高
+        如果没有找到符合条件的匹配结果, 返回None
+
+    """
+    result = find_all_template(im_source, im_template, threshold, 1, edge, debug)
+    return result[0] if result else None
 
 
 def find_all_template(im_source: ndarray, im_template: ndarray, threshold: float = 0.5, maxcnt: int = 0,
+
                       edge: bool = False,
                       debug: bool = False):
     """
@@ -78,15 +86,40 @@ def find_all_template(im_source: ndarray, im_template: ndarray, threshold: float
         if debug:
             print("Canny time: {}".format(time.time() - start_time))
 
+    result, start_time = _internal_find(gray_source, gray_template, maxcnt, threshold, debug)
+
+    return result
+
+
+def _to_gray(image):
+    channel = 1 if len(image.shape) == 2 else image.shape[2]
+    if channel == 1:
+        # if the image is gray, then keep it
+        image_gray = image
+    elif channel == 3:
+        # if it's colorful, then convert it to gray
+        image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    elif channel == 4:
+        # if it's colorful with transparent channel, then convert it to gray
+        image_gray = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
+    else:
+        raise RuntimeError('im_search have {} channel, which is unexpected!'.format(channel))
+    return image_gray
+
+
+def _internal_find(gray_source, gray_template, maxcnt, threshold, debug):
+    start_time = time.time()
+
+    w, h = gray_template.shape[1], gray_template.shape[0]
+    sw, sh = gray_source.shape[1], gray_source.shape[0]
+
     if debug:
         start_time = time.time()
     res = cv2.matchTemplate(gray_source, gray_template, cv2.TM_CCOEFF_NORMED)
     if debug:
         print("matchTemplate time: {}".format(time.time() - start_time))
-
     if debug:
         start_time = time.time()
-
     result = []
     while True:
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
@@ -115,27 +148,4 @@ def find_all_template(im_source: ndarray, im_template: ndarray, threshold: float
     if debug:
         print("find max time: {}".format(time.time() - start_time))
 
-    return result
-
-
-def find_template(im_source: ndarray, im_template: ndarray, threshold: float = 0.5,
-                  edge: bool = False,
-                  debug: bool = False):
-    """
-    在im_source中查找im_template的匹配位置，返回最匹配的那个结果，内部调用find_all_template实现
-    Args:
-        im_source(string): 源图(大图)，opencv格式的图片
-        im_template(string): 需要查找的图片(小图)，opencv格式的图片
-        threshold: 阈值，当匹配度小于该阈值的时候，就忽略掉，是一个-1~1之间的值，通常小于0.5，匹配度就相当低了
-        edge: 是否做边缘提取后再匹配，缺省为False，如果设置为True，会把源图和模板图，都基于Canny算法提取边缘，然后再做匹配
-        debug: 是否不输出中间处理步骤和处理时间
-    Returns:
-        匹配结果对象,包含如下属性:
-        result: 匹配区域的中心点
-        rectangle: 匹配区域的四角坐标
-        confidence: 匹配程度, 是一个-1~1之间的值, 约大表示匹配度越高
-        如果没有找到符合条件的匹配结果, 返回None
-
-    """
-    result = find_all_template(im_source, im_template, threshold, 1, edge, debug)
-    return result[0] if result else None
+    return result, start_time
