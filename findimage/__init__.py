@@ -14,10 +14,12 @@ __version__ = '0.1.1'
 import time
 
 from cv2 import cv2
+import numpy as np
 from numpy import ndarray
 
 
 def find_template(im_source: ndarray, im_template: ndarray, threshold: float = 0.5,
+                  auto_scale: tuple = None,
                   edge: bool = False,
                   debug: bool = False):
     """
@@ -26,6 +28,8 @@ def find_template(im_source: ndarray, im_template: ndarray, threshold: float = 0
         im_source(string): 源图(大图)，opencv格式的图片
         im_template(string): 需要查找的图片(小图)，opencv格式的图片
         threshold: 阈值，当匹配度小于该阈值的时候，就忽略掉，是一个-1~1之间的值，通常小于0.5，匹配度就相当低了
+        auto_scale: 是否自动缩放im_template来查找匹配，如果为None表示不缩放，如果需要缩放，那么传一个tuple：(min_scale, max_scale, step)，
+        其中min_scale和max_scale分别是缩放倍数的下限和上限，都是小数，min_scale介于0~1之间，max_scale大于1,
         edge: 是否做边缘提取后再匹配，缺省为False，如果设置为True，会把源图和模板图，都基于Canny算法提取边缘，然后再做匹配
         debug: 是否不输出中间处理步骤和处理时间
     Returns:
@@ -36,12 +40,12 @@ def find_template(im_source: ndarray, im_template: ndarray, threshold: float = 0
         如果没有找到符合条件的匹配结果, 返回None
 
     """
-    result = find_all_template(im_source, im_template, threshold, 1, edge, debug)
+    result = find_all_template(im_source, im_template, threshold, 1, auto_scale, edge, debug)
     return result[0] if result else None
 
 
 def find_all_template(im_source: ndarray, im_template: ndarray, threshold: float = 0.5, maxcnt: int = 0,
-
+                      auto_scale=None,
                       edge: bool = False,
                       debug: bool = False):
     """
@@ -52,6 +56,9 @@ def find_all_template(im_source: ndarray, im_template: ndarray, threshold: float
         im_template(string): 需要查找的图片(小图)，opencv格式的图片
         threshold: 阈值，当匹配度小于该阈值的时候，就忽略掉，是一个-1~1之间的值，通常小于0.5，匹配度就相当低了
         maxcnt: 最大匹配数量, 缺省为0, 即不限
+        auto_scale: 是否自动缩放im_template来查找匹配，如果为None表示不缩放，如果需要缩放，那么传一个tuple：(min_scale, max_scale, step)，
+        其中min_scale和max_scale分别是缩放倍数的下限和上限，都是小数，min_scale介于0~1之间，max_scale大于1,
+        step是从min_scale开始，逐步尝试到max_scale之间的步长，缺省值为0.1，例如(0.8, 1.6, 0.2)
         edge: 是否做边缘提取后再匹配，缺省为False，如果设置为True，会把源图和模板图，都基于Canny算法提取边缘，然后再做匹配
         debug: 是否不输出中间处理步骤和处理时间
     Returns:
@@ -86,7 +93,20 @@ def find_all_template(im_source: ndarray, im_template: ndarray, threshold: float
         if debug:
             print("Canny time: {}".format(time.time() - start_time))
 
-    result, start_time = _internal_find(gray_source, gray_template, maxcnt, threshold, debug)
+    result = _internal_find(gray_source, gray_template, maxcnt, threshold, debug)
+
+    if len(result) == 0 and auto_scale is not None:
+        scale_min = auto_scale[0]
+        scale_max = auto_scale[1]
+        step = auto_scale[2] if len(auto_scale)>2 else 0.1
+        for scale in np.arange(scale_min, scale_max, step):
+            resized = cv2.resize(gray_template, (int(w * scale), int(h * scale)),
+                                 interpolation=cv2.INTER_CUBIC)
+            match_results = _internal_find(gray_source, resized, maxcnt, threshold, debug)
+            if debug:
+                print("try resize template in scale {} to find match".format(scale))
+            if len(match_results) > 0:
+                break
 
     return result
 
@@ -148,4 +168,4 @@ def _internal_find(gray_source, gray_template, maxcnt, threshold, debug):
     if debug:
         print("find max time: {}".format(time.time() - start_time))
 
-    return result, start_time
+    return result
