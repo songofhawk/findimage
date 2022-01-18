@@ -98,16 +98,20 @@ def find_all_template(im_source: ndarray, im_template: ndarray, threshold: float
     if len(result) == 0 and auto_scale is not None:
         scale_min = auto_scale[0]
         scale_max = auto_scale[1]
-        step = auto_scale[2] if len(auto_scale)>2 else 0.1
+        step = auto_scale[2] if len(auto_scale) > 2 else 0.1
         for scale in np.arange(scale_min, scale_max, step):
             resized = cv2.resize(gray_template, (int(w * scale), int(h * scale)),
                                  interpolation=cv2.INTER_CUBIC)
-            match_results = _internal_find(gray_source, resized, maxcnt, threshold, debug)
             if debug:
                 print("try resize template in scale {} to find match".format(scale))
-            if len(match_results) > 0:
+            result = _internal_find(gray_source, resized, maxcnt, threshold, debug)
+            if len(result) > 0:
                 break
-
+    if debug:
+        if len(result) > 0:
+            print("found {} results, top confidence is:{}".format(len(result), result[0]['confidence']))
+        else:
+            print("found nothing!")
     return result
 
 
