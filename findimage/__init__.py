@@ -29,7 +29,8 @@ def find_template(im_source: ndarray, im_template: ndarray, threshold: float = 0
         im_template(string): 需要查找的图片(小图)，opencv格式的图片
         threshold: 阈值，当匹配度小于该阈值的时候，就忽略掉，是一个-1~1之间的值，通常小于0.5，匹配度就相当低了
         auto_scale: 是否自动缩放im_template来查找匹配，如果为None表示不缩放，如果需要缩放，那么传一个tuple：(min_scale, max_scale, step)，
-        其中min_scale和max_scale分别是缩放倍数的下限和上限，都是小数，min_scale介于0~1之间，max_scale大于1,
+        其中min_scale和max_scale分别是缩放倍数的下限和上限，都是小数，min_scale介于0~1之间，max_scale大于1, step表示从min尝试到max之间的步长,
+        默认为0.1。
         edge: 是否做边缘提取后再匹配，缺省为False，如果设置为True，会把源图和模板图，都基于Canny算法提取边缘，然后再做匹配
         debug: 是否不输出中间处理步骤和处理时间
     Returns:
@@ -57,7 +58,8 @@ def find_all_template(im_source: ndarray, im_template: ndarray, threshold: float
         threshold: 阈值，当匹配度小于该阈值的时候，就忽略掉，是一个-1~1之间的值，通常小于0.5，匹配度就相当低了
         maxcnt: 最大匹配数量, 缺省为0, 即不限
         auto_scale: 是否自动缩放im_template来查找匹配，如果为None表示不缩放，如果需要缩放，那么传一个tuple：(min_scale, max_scale, step)，
-        其中min_scale和max_scale分别是缩放倍数的下限和上限，都是小数，min_scale介于0~1之间，max_scale大于1,
+        其中min_scale和max_scale分别是缩放倍数的下限和上限，都是小数，min_scale介于0~1之间，max_scale大于1, step表示从min尝试到max之间的步长,
+        默认为0.1
         step是从min_scale开始，逐步尝试到max_scale之间的步长，缺省值为0.1，例如(0.8, 1.6, 0.2)
         edge: 是否做边缘提取后再匹配，缺省为False，如果设置为True，会把源图和模板图，都基于Canny算法提取边缘，然后再做匹配
         debug: 是否不输出中间处理步骤和处理时间
