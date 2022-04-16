@@ -102,4 +102,5 @@ for match_result in match_results:
 cv2.imwrite('result.png', img_result)
 ```
 find_all_template方法，提供一个额外的maxcnt参数，用于限制最多查找多少个结果，缺省为0（即不限），以上代码会把所有结果绘制出来：
+
 ![find_all_template匹配结果](https://github.com/songofhawk/findimage/raw/main/image/find_all_template_result.png)
