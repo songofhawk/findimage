@@ -21,7 +21,12 @@ There are several improvements and changes in this projects:
 * optimized the performance of find_all, use numpy slicing set data instead of floodFill
 * removed methods that are not related to finding images
 
-## 示例
+## 安装
+```shell
+pip install findimage
+```
+
+## 使用示例1
 比如我们对“思否”课程菜单截图如下：
 ![思否课程菜单-标准](https://github.com/songofhawk/findimage/raw/main/image/seg_course_menu.png)
 
@@ -65,3 +70,36 @@ cv2.imwrite('result.png', img_result)
 
 结果如下图所示：
 ![find_template匹配结果](https://github.com/songofhawk/findimage/raw/main/image/find_template_result.png)
+
+## 使用示例2——指定匹配度
+find_template方法有一个threshold参数，如果设置了这个值，那么只有大于指定匹配度的图像，才能被查找出来：
+```python
+match_result = find_template(image_origin, image_template, 0.8)
+```
+这个参数的取值范围是0~1，缺省值是0.5，这个值设置得越低，越容易找到结果，但也越容易找错；设置得越高，结果匹配越准确，但也可能找不到结果
+
+## 使用示例3——查找所有结果
+一张大图上不一定只有一个小图匹配结果，也可能有多个，如果需要返回多个结果，可以使用find_all_template方法:
+```python
+from cv2 import cv2
+import time
+
+from findimage import find_all_template
+
+image_origin = cv2.imread('seg_course_menu.png')
+image_template = cv2.imread('seg_sharp.png')
+
+start_time = time.time()
+# 查找所有匹配
+match_results = find_all_template(image_origin, image_template, 0.8, 50)
+print("total time: {}".format(time.time() - start_time))
+
+# 绘制结果图
+img_result = image_origin.copy()
+for match_result in match_results:
+    rect = match_result['rectangle']
+    cv2.rectangle(img_result, (rect[0][0], rect[0][1]), (rect[3][0], rect[3][1]), (0, 0, 220), 2)
+cv2.imwrite('result.png', img_result)
+```
+find_all_template方法，提供一个额外的maxcnt参数，用于限制最多查找多少个结果，缺省为0（即不限），以上代码会把所有结果绘制出来：
+![find_all_template匹配结果](https://github.com/songofhawk/findimage/raw/main/image/find_all_template_result.png)

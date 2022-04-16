@@ -3,11 +3,11 @@ import time
 
 from findimage import find_all_template
 
-image_origin = cv2.imread('seg_course_whole_page.png')
+image_origin = cv2.imread('seg_course_menu.png')
 image_template = cv2.imread('seg_sharp.png')
 
 start_time = time.time()
-match_results = find_all_template(image_origin, image_template, 0.5, 50, debug=True)
+match_results = find_all_template(image_origin, image_template, 0.8, 50, debug=True)
 print("total time: {}".format(time.time() - start_time))
 
 img_result = image_origin.copy()
