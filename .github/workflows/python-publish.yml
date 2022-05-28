@@ -36,12 +36,12 @@ jobs:
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
       with:
         user: __token__
-        password: ${{ secrets.PYPI_TEST }}
+        password: pypi-AgENdGVzdC5weXBpLm9yZwIkNzM0OTk0ZDQtYTkwYy00NjlmLWI1N2MtMDc3N2I2OTg3M2I4AAI6eyJwZXJtaXNzaW9ucyI6IHsicHJvamVjdHMiOiBbImZpbmRpbWFnZSJdfSwgInZlcnNpb24iOiAxfQAABiDy_Y2og7_Gef2VW0sA06uYfm10VD8pgGRPHzlgoiHIMA
         repository_url: https://test.pypi.org/legacy/
     - name: Publish to Pypi production
       if: startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
       with:
         user: __token__
-        password: ${{ secrets.PYPI_PROD }}
+        password: ${{secrets.PYPI_PROD}}
 
