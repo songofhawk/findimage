@@ -9,8 +9,8 @@
 name: Upload to Pypi
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [ master ]
 
 permissions:
   contents: read
