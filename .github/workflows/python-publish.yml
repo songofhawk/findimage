@@ -10,7 +10,7 @@ name: Upload to Pypi
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 permissions:
   contents: read
