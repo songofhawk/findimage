@@ -131,4 +131,4 @@ dmypy.json
 # pycharm
 /.idea/*
 
-/tests/result.png
+/image/find_all_template_result.en.png

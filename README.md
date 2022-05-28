@@ -1,3 +1,5 @@
+[English version](README.en.md)
+
 # findimage - 在大图中找小图
 本项目不是图像搜索，不能从一堆图片中找到相似的那张，而是从一张大图中定位给定模板小图的位置。
 
@@ -65,7 +67,7 @@ match_result = find_template(image_origin, image_template)
 img_result = image_origin.copy()
 rect = match_result['rectangle']
 cv2.rectangle(img_result, (rect[0][0], rect[0][1]), (rect[3][0], rect[3][1]), (0, 0, 220), 2)
-cv2.imwrite('result.png', img_result)
+cv2.imwrite('find_all_template_result.en.png', img_result)
 ```
 
 结果如下图所示：
@@ -99,7 +101,7 @@ img_result = image_origin.copy()
 for match_result in match_results:
     rect = match_result['rectangle']
     cv2.rectangle(img_result, (rect[0][0], rect[0][1]), (rect[3][0], rect[3][1]), (0, 0, 220), 2)
-cv2.imwrite('result.png', img_result)
+cv2.imwrite('find_all_template_result.en.png', img_result)
 ```
 find_all_template方法，提供一个额外的maxcnt参数，用于限制最多查找多少个结果，缺省为0（即不限），以上代码会把所有结果绘制出来：
 
