@@ -65,6 +65,7 @@ cv2.imwrite('result.png', img_result)
 ```
 
 which looks like the following one:
+
 ![find_template match result](https://github.com/songofhawk/findimage/raw/main/image/find_template_result.en.png)
 
 ## Demo2: specifying the confidence
