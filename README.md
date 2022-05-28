@@ -13,15 +13,6 @@ find the template image (smaller) in a source image (bigger)
 * 支持背景透明的图片
 * 优化了find_all_template方法的性能，用numpy的切片赋值代替floodFill方法来避免重叠，大概会缩短1/4的总体查找时间
 
-To find a template image(smaller) in a source image(bigger)
-
-This project is inspired from https://github.com/NetEaseGame/aircv.git, which is not maintained for a long time.
-
-There are several improvements and changes in this projects:
-* support finding grayscale image, either source or template
-* support finding image with transparent channel
-* optimized the performance of find_all, use numpy slicing set data instead of floodFill
-* removed methods that are not related to finding images
 
 ## 安装
 ```shell
